@@ -18,7 +18,7 @@ MyArray.prototype = myArrayProto;
 
 myArrayProto.push = function (...args) {
 	for (let i = 0; i < args.length; i++) {
-		this[++this.length] = args[i];
+		this[this.length++] = args[i];
 	}
 	return this.length;
 }
@@ -60,4 +60,14 @@ myArrayProto.join = function (separator = ',') {
 		}
 	}
 	return str;
+}
+
+myArrayProto.filter = function (callback) {
+	const arr = new MyArray();
+	for (let i = 0; i < this.length; i++) {
+		if (callback(this[i], i, this)) {
+			arr.push(this[i]);
+		}
+	}
+	return arr;
 }
