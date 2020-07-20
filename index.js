@@ -79,3 +79,24 @@ myArrayProto.map = function (callback) {
 	}
 	return arr;
 }
+
+myArrayProto.reduce = function (callback, initialValue) {
+	if (!this.length && !initialValue) {
+		throw new TypeError();
+	}
+	if (!this.length && initialValue) {
+		return initialValue;
+	}
+	if (this.length === 1 && !initialValue) {
+		for (const item of this) {
+			if (item) {
+				return item;
+			}
+		}
+	}
+	let accumulator = initialValue ? initialValue : this[0];
+	for (let i = initialValue ? 0 : 1; i < this.length; i++) {
+		accumulator = callback(accumulator, this[i], i, this);
+	}
+	return accumulator;
+}
