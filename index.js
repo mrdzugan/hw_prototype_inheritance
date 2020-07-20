@@ -50,3 +50,14 @@ myArrayProto.includes = function (searchElement, fromIndex = 0) {
 	return false;
 }
 
+myArrayProto.join = function (separator = ',') {
+	let str = '';
+	for (let i = 0; i < this.length; i++) {
+		if (i === this.length - 1) {
+			str += this[i];
+		} else {
+			str += this[i] + separator;
+		}
+	}
+	return str;
+}
