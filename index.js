@@ -31,3 +31,22 @@ myArrayProto.find = function (callback) {
 	}
 }
 
+myArrayProto.includes = function (searchElement, fromIndex = 0) {
+	if (fromIndex >= this.length) {
+		return false;
+	}
+	if (fromIndex < 0) {
+		if (fromIndex + this.length < 0) {
+			fromIndex = 0;
+		} else {
+			fromIndex += this.length;
+		}
+	}
+	for (let i = fromIndex; i < this.length; i++) {
+		if (this[i] === searchElement) {
+			return true;
+		}
+	}
+	return false;
+}
+
