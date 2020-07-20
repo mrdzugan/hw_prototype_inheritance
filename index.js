@@ -4,6 +4,7 @@ function MyArray(...args) {
 	if (!new.target) {
 		return new MyArray(...args);
 	}
+	this.isMyArray = () => this instanceof MyArray;
 	this.length = 0;
 	if (args.length) {
 		for (const item of args) {
@@ -81,22 +82,61 @@ myArrayProto.map = function (callback) {
 }
 
 myArrayProto.reduce = function (callback, initialValue) {
-	if (!this.length && !initialValue) {
+	if (!this.length && initialValue === undefined) {
 		throw new TypeError();
 	}
-	if (!this.length && initialValue) {
+	if (!this.length && initialValue !== undefined) {
 		return initialValue;
 	}
-	if (this.length === 1 && !initialValue) {
+	if (this.length === 1 && initialValue === undefined) {
 		for (const item of this) {
 			if (item) {
 				return item;
 			}
 		}
 	}
-	let accumulator = initialValue ? initialValue : this[0];
-	for (let i = initialValue ? 0 : 1; i < this.length; i++) {
+	let accumulator = initialValue !== undefined ? initialValue : this[0];
+	for (let i = initialValue !== undefined ? 0 : 1; i < this.length; i++) {
 		accumulator = callback(accumulator, this[i], i, this);
 	}
 	return accumulator;
+}
+
+myArrayProto.concat = function (...args) {
+	const arr = new MyArray();
+	for (let i = 0; i < this.length; i++) {
+		arr.push(this[i]);
+	}
+
+	for (let i = 0; i < args.length; i++) {
+		if (args[i] instanceof MyArray) {
+			for (let j = 0; j < args[i].length; j++) {
+				arr.push(args[i][j]);
+			}
+			continue;
+		}
+		arr.push(args[i]);
+	}
+	return arr;
+}
+
+myArrayProto.flat = function (depth = 1) {
+
+	let arr = new MyArray();
+	if (depth < 0) return this;
+	if (depth === 0) return this.filter(i => i !== undefined);
+	for (let i = 0; i < this.length; i++) {
+		if (this[i] instanceof MyArray) {
+			arr = arr.concat(this[i].flat(depth - 1));
+		} else if (this[i] !== undefined) {
+			arr.push(this[i]);
+		}
+	}
+	return arr;
+}
+
+myArrayProto.pop = function () {
+	const lastElement = this[this.length - 1];
+	delete this[--this.length];
+	return lastElement;
 }
